@@ -1,20 +1,7 @@
-const qrcode = require("qrcode-terminal");
+const fs = require("fs");
 
 const { Client } = require("whatsapp-web.js");
-
-/**  === GENERATE QR CODE FOR SESSION ===
- *  Once it's generated, and scanned, you can comment it
- */
-
-// client.on("qr", (qr) => {
-//   qrcode.generate(qr, { small: true });
-// });
-
-// client.on("ready", () => {
-//   console.log("Client is ready!");
-// });
-
-// client.initialize();
+const qrcode = require("qrcode-terminal");
 
 const SESSION_FILE_PATH = "./session.json";
 let client;
@@ -36,10 +23,15 @@ const withOutSession = () => {
   client.on("authenticated", (session) => {
     // Guardamos credenciales de session para luego
     sessionData = session;
-    fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function (err) {
+    fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), (err) => {
       if (err) {
         console.log(err);
       }
     });
   });
+
+  client.initialize();
 };
+
+/** */
+fs.existsSync(SESSION_FILE_PATH) ? withSession() : withOutSession();
